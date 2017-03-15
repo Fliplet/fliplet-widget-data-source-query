@@ -4,10 +4,12 @@ var data = Fliplet.Widget.getData();
 // Fired when the external save button is clicked
 Fliplet.Widget.onSaveRequest(function () {
 
-  // Sample data retrieval
-  data.sample = $('input[name="sample"]').val();
+  // Set the data
+  data.result = {
+    foo: true
+  };
 
-  // Save the result
+  // Send back the result
   Fliplet.Widget.save(data).then(function () {
     // Tell the UI this widget has finished
     Fliplet.Widget.complete();
