@@ -184,8 +184,12 @@ Fliplet.Widget.onSaveRequest(() => {
   // Set the data
   app.widgetData.result = app.result;
 
+  var resultData = JSON.parse(JSON.stringify(_.pick(app.widgetData, ['settings', 'result'])));
+
+  console.log('Saving', resultData)
+
   // Send back the result
-  Fliplet.Widget.save(app.widgetData).then(() => {
+  Fliplet.Widget.save(resultData).then(() => {
     console.log('saved');
     // Tell the UI this widget has finished
     Fliplet.Widget.complete();
