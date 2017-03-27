@@ -8,11 +8,16 @@
   "interface": {
     "dependencies": [
       "fliplet-studio-ui",
-      "fliplet-datasources"
+      "fliplet-datasources",
+      "vue.js"
     ],
     "assets": [
       "js/interface.js",
-      "css/interface.css"
+      "css/interface.css",
+      "js/bootstrap-tagsinput.min.js",
+      "css/bootstrap-tagsinput.css",
+      "js/typeahead.bundle.js",
+      "css/typeahead.css"
     ]
   },
   "build": {
