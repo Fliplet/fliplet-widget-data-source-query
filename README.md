@@ -21,3 +21,15 @@ $ cd fliplet-widget-data-source-query
 
 $ fliplet run
 ```
+
+Installing gulp and its plugins:
+
+```
+$ npm install
+```
+
+Running gulp to continuously build ES6 into JS:
+
+```
+$ npm run watch
+```

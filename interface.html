@@ -24,25 +24,26 @@
       <div class="col-sm-8">
         <label class="select-proxy-display" v-if="field.type === 'single'">
           <span class="icon fa fa-chevron-down"></span>
-          <select v-if="selectedDataSource" data-label="select" class="hidden-select form-control"
-                  v-model="selectedColumns[field.key]"
+          <select v-if="selectedDataSource && selectedDataSource.columns && selectedDataSource.columns.length"
+                  data-label="select" class="hidden-select form-control" v-model="selectedColumns[field.key]"
                   v-on:change="updateSelectedColumns(field.key, $event.target.value)">
             <option :value="undefined">-- \{{field.label}}</option>
             <option :value="column" v-for="column in selectedDataSource.columns">
               \{{column}}
             </option>
           </select>
-          <select data-label="select" class="hidden-select form-control" disabled="disabled" v-if="!selectedDataSource">
-            <option>-- Please \{{ dataSources ? 'select a data source' : 'wait' }}</option>
+          <select v-if="!selectedDataSource || !selectedDataSource.columns || !selectedDataSource.columns.length"
+                  data-label="select" class="hidden-select form-control" disabled="disabled">
+            <option> \{{columnWarning}}</option>
           </select>
         </label>
         <label class="full-width" v-if="field.type === 'multiple'">
-          <span v-if="selectedDataSource">
+          <span v-if="selectedDataSource && selectedDataSource.columns && selectedDataSource.columns.length">
             <tagsinput :tagsinput-data="typeaheadData" :field="field" :init-arr="selectedColumns[field.key]"
                        :update-selected-columns="updateSelectedColumns"></tagsinput>
           </span>
-          <input v-if="!selectedDataSource" class="form-control height-30" type="text"
-                 disabled="disabled" :value=" '-- Please ' + (dataSources ? 'select a data source' : 'wait') "/>
+          <input v-if="!selectedDataSource || !selectedDataSource.columns || !selectedDataSource.columns.length"
+                 class="form-control height-30" type="text" disabled="disabled" :value="columnWarning"/>
         </label>
       </div>
     </div>
@@ -51,7 +52,8 @@
       <div class="col-sm-4"></div>
       <div class="col-sm-8">
         <div class="checkbox checkbox-icon pull-left">
-          <input type="checkbox" id="apply-filter" v-model="applyFilters" :disabled="!selectedDataSource"/>
+          <input type="checkbox" id="apply-filter" v-model="applyFilters"
+                 :disabled="!selectedDataSource || !selectedDataSource.columns || !selectedDataSource.columns.length"/>
           <label for="apply-filter">
             <span class="check">
               <i class="fa fa-check"></i>
