@@ -1,7 +1,5 @@
 <form id="app" v-cloak class="container-fluid">
-  <!--<pre>selectedColumns: \{{ selectedColumns | json }}</pre>-->
-  <!--<pre>filters: \{{ filters | json }}</pre>-->
-  <pre>result: \{{ result | json }}</pre>
+  <pre v-if="selectedDataSource">result: \{{ result | json }}</pre>
   <div class="form-group row">
     <div class="col-sm-4 control-label">
       <label>{{settings.dataSourceLabel}}</label>
@@ -10,31 +8,41 @@
       <label class="select-proxy-display">
         <span class="icon fa fa-chevron-down"></span>
         <select data-label="select" class="hidden-select form-control" v-model="selectedDataSource"
-                v-on:change="onDataSourceSelection">
-          <option :value="null">-- \{{ dataSources ? 'Select a data source' : 'Please wait'}}</option>
+                v-on:change="onDataSourceSelection" :disabled="!dataSources">
+          <option :value="null">-- \{{ dataSources ? 'Select a data source' : 'Please wait' }}</option>
           <option :value="dataSource" v-for="dataSource in dataSources">\{{dataSource.name}}</option>
         </select>
       </label>
     </div>
   </div>
 
-  <div v-if="selectedDataSource" class="row container-fluid">
-    <div v-for="field in widgetData.settings.columns" class="row">
+  <div class="row container-fluid">
+    <div v-for="field in columns" class="row">
       <div class="col-sm-4 control-label">
         <label>\{{field.label}}</label>
       </div>
       <div class="col-sm-8">
         <label class="select-proxy-display" v-if="field.type === 'single'">
           <span class="icon fa fa-chevron-down"></span>
-          <select data-label="select" class="hidden-select form-control" v-model="selectedColumns[field.key]"
+          <select v-if="selectedDataSource" data-label="select" class="hidden-select form-control"
+                  v-model="selectedColumns[field.key]"
                   v-on:change="updateSelectedColumns(field.key, $event.target.value)">
             <option :value="undefined">-- \{{field.label}}</option>
-            <option :value="column" v-for="column in selectedDataSource.columns">\{{column}}</option>
+            <option :value="column" v-for="column in selectedDataSource.columns">
+              \{{column}}
+            </option>
+          </select>
+          <select data-label="select" class="hidden-select form-control" disabled="disabled" v-if="!selectedDataSource">
+            <option>-- Please \{{ dataSources ? 'select a data source' : 'wait' }}</option>
           </select>
         </label>
         <label class="full-width" v-if="field.type === 'multiple'">
-          <tagsinput :tagsinput-data="typeaheadData" :field="field"
-                     :update-selected-columns="updateSelectedColumns"></tagsinput>
+          <span v-if="selectedDataSource">
+            <tagsinput :tagsinput-data="typeaheadData" :field="field" :init-arr="selectedColumns[field.key]"
+                       :update-selected-columns="updateSelectedColumns"></tagsinput>
+          </span>
+          <input v-if="!selectedDataSource" class="form-control height-30" type="text"
+                 disabled="disabled" :value=" '-- Please ' + (dataSources ? 'select a data source' : 'wait') "/>
         </label>
       </div>
     </div>
@@ -43,7 +51,7 @@
       <div class="col-sm-4"></div>
       <div class="col-sm-8">
         <div class="checkbox checkbox-icon pull-left">
-          <input type="checkbox" id="apply-filter" v-model="applyFilters"/>
+          <input type="checkbox" id="apply-filter" v-model="applyFilters" :disabled="!selectedDataSource"/>
           <label for="apply-filter">
             <span class="check">
               <i class="fa fa-check"></i>
@@ -53,7 +61,7 @@
         </div>
         <div class="pull-right">
           <span v-if="showFilters" class="btn btn-link" v-on:click="showFilters = false">Hide filters​</span>
-          <span v-if="!showFilters && filters.length" class="btn btn-link"
+          <span v-if="!showFilters && filters.length && dataSources" class="btn btn-link"
                 v-on:click="showFilters = true">Show filters​</span>
         </div>
       </div>
