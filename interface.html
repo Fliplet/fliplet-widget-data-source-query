@@ -1,5 +1,5 @@
 <form id="app" v-cloak class="container-fluid">
-  <pre v-if="selectedDataSource">result: \{{ result | json }}</pre>
+  <!--<pre v-if="selectedDataSource">result: \{{ result | json }}</pre>-->
   <div class="form-group row">
     <div class="col-sm-4 control-label">
       <label>{{settings.dataSourceLabel}}</label>
@@ -116,7 +116,7 @@
         <div class="col-sm-4 control-label"></div>
         <div class="col-sm-8">
           <div class="icon fa fa-minus grey-icon-button pull-left" v-on:click="filters.splice(index, 1)"></div>
-          <div class="icon fa fa-plus blue-icon-button pull-right"
+          <div v-if="index === (filters.length - 1)" class="icon fa fa-plus blue-icon-button pull-right"
                v-on:click="addDefaultFilter"></div>
         </div>
       </div>
