@@ -53,6 +53,10 @@
 
 	'use strict';
 	
+	var _stringify = __webpack_require__(87);
+	
+	var _stringify2 = _interopRequireDefault(_stringify);
+	
 	var _assign = __webpack_require__(2);
 	
 	var _assign2 = _interopRequireDefault(_assign);
@@ -73,10 +77,6 @@
 	
 	var _keys2 = _interopRequireDefault(_keys);
 	
-	var _stringify = __webpack_require__(87);
-	
-	var _stringify2 = _interopRequireDefault(_stringify);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var data = Fliplet.Widget.getData();
@@ -86,7 +86,6 @@
 	  el: '#app',
 	  created: function created() {
 	    if (initialResult) {
-	      console.log('parsing result:', JSON.parse((0, _stringify2.default)(initialResult)));
 	      this.filters = initialResult.filters.$and.map(function (filterDataEntry) {
 	        var columnKey = (0, _keys2.default)(filterDataEntry)[0];
 	        var innerObject = filterDataEntry[columnKey];
@@ -330,7 +329,6 @@
 	        // setTimeout(() => {
 	        _this.loadingError = null;
 	        _this.dataSources = data;
-	        console.log('dataSources:', JSON.parse((0, _stringify2.default)(data)));
 	
 	        if (initialResult) {
 	          _this.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });

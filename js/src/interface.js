@@ -5,7 +5,6 @@ let app = new Vue({
   el: '#app',
   created() {
     if (initialResult) {
-      console.log(`parsing result:`, JSON.parse(JSON.stringify(initialResult)));
       this.filters = initialResult.filters.$and.map((filterDataEntry) => {
         let columnKey = Object.keys(filterDataEntry)[0];
         let innerObject = filterDataEntry[columnKey];
@@ -198,7 +197,6 @@ let app = new Vue({
             // setTimeout(() => {
             this.loadingError = null;
             this.dataSources = data;
-            console.log(`dataSources:`, JSON.parse(JSON.stringify(data)));
 
             if (initialResult) {
               this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
