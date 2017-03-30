@@ -55,7 +55,12 @@ let app = new Vue({
     this.getDataSources();
   },
   data: {
-    columns: settings.columns,
+    columns: settings.columns.map((o) => {
+      if (!o.type || ['single', 'multiple'].indexOf(o.type) === -1) {
+        o.type = 'single';
+      }
+      return o;
+    }),
     dataSources: null,
     selectedDataSource: null,
     selectedColumns: initialResult ? initialResult.columns : {},
