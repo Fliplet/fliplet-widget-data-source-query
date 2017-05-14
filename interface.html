@@ -16,8 +16,19 @@
     </div>
   </div>
 
+  <div class="form-group row" v-if="showModesSelector">
+    <div class="col-sm-4 control-label">
+      <label>{{settings.modesDescription}}</label>
+    </div>
+    <div class="col-sm-8">
+      <div v-for="(mode, index) in modes">
+        <input v-model="selectedModeIdx" :id="'mode-' + index" type="radio" :value="index" /> <label :for="'mode-' + index">\{{ mode.label }}</label>
+      </div>
+    </div>
+  </div>
+
   <div class="row container-fluid">
-    <div v-for="field in columns" class="row">
+    <div v-for="field in selectedMode.columns" class="row">
       <div class="col-sm-4 control-label">
         <label>\{{field.label}}</label>
       </div>
@@ -48,7 +59,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" v-if="selectedMode.filters">
       <div class="col-sm-4"></div>
       <div class="col-sm-8">
         <div class="checkbox checkbox-icon pull-left">

@@ -1,6 +1,23 @@
 let data = Fliplet.Widget.getData();
 let initialResult = data.result;
 let settings = data.settings;
+
+if (!settings.modes) {
+  settings.modes = [{
+    columns: settings.columns || []
+  }]
+}
+
+// Defaults
+settings.modes.forEach((mode) => {
+  mode.filters = typeof mode.filters === 'undefined' ? true : mode.filters
+  mode.columns.forEach((col) => {
+    if (!col.type || ['single', 'multiple'].indexOf(col.type) === -1) {
+      col.type = 'single'
+    }
+  })
+})
+
 let app = new Vue({
   el: '#app',
   created() {
@@ -55,22 +72,23 @@ let app = new Vue({
     this.getDataSources();
   },
   data: {
-    columns: settings.columns.map((o) => {
-      if (!o.type || ['single', 'multiple'].indexOf(o.type) === -1) {
-        o.type = 'single';
-      }
-      return o;
-    }),
     dataSources: null,
     selectedDataSource: null,
     selectedColumns: initialResult ? initialResult.columns : {},
     applyFilters: initialResult ? initialResult.applyFilters : false,
     showFilters: false,
+    showModesSelector: settings.modes.length > 1,
     operators: ['is exactly', 'contains', 'begins with', 'ends with', 'like'],
     loadingError: null,
-    filters: []
+    filters: [],
+    modesDescription: settings.modesDescription,
+    modes: settings.modes,
+    selectedModeIdx: initialResult ? initialResult.selectedModeIdx || 0
   },
   computed: {
+    selectedMode() {
+      return settings.modes[this.selectedModeIdx]
+    },
     columnWarning() {
       let message = '-- ';
       if (this.dataSources) {
@@ -171,6 +189,7 @@ let app = new Vue({
           applyFilters: this.applyFilters,
           hideFilters: this.hideFilters,
           dataSourceId: this.selectedDataSource.id,
+          selectedModeIdx: this.selectedModeIdx,
           filters: {
             $and: filterData
           },
