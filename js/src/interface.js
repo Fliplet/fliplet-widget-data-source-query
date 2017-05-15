@@ -83,7 +83,7 @@ let app = new Vue({
     filters: [],
     modesDescription: settings.modesDescription,
     modes: settings.modes,
-    selectedModeIdx: initialResult ? initialResult.selectedModeIdx || 0
+    selectedModeIdx: initialResult ? initialResult.selectedModeIdx : 0
   },
   computed: {
     selectedMode() {
@@ -212,6 +212,9 @@ let app = new Vue({
         this.addDefaultFilter();
       }
       this.showFilters = val;
+    },
+    selectedModeIdx(val) {
+      Fliplet.Widget.emit('mode-changed', val);
     }
   },
   methods: {

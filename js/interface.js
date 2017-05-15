@@ -165,7 +165,7 @@
 	    filters: [],
 	    modesDescription: settings.modesDescription,
 	    modes: settings.modes,
-	    selectedModeIdx: 0
+	    selectedModeIdx: initialResult ? initialResult.selectedModeIdx : 0
 	  },
 	  computed: {
 	    selectedMode: function selectedMode() {
@@ -320,6 +320,7 @@
 	          applyFilters: this.applyFilters,
 	          hideFilters: this.hideFilters,
 	          dataSourceId: this.selectedDataSource.id,
+	          selectedModeIdx: this.selectedModeIdx,
 	          filters: {
 	            $and: filterData
 	          },
@@ -342,6 +343,9 @@
 	        this.addDefaultFilter();
 	      }
 	      this.showFilters = val;
+	    },
+	    selectedModeIdx: function selectedModeIdx(val) {
+	      Fliplet.Widget.emit('mode-changed', val);
 	    }
 	  },
 	  methods: {
