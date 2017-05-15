@@ -77,6 +77,13 @@ var sampleData = {
 };
 
 Fliplet.Widget.open('com.fliplet.data-source-query', {
-  data: sampleData
+  data: sampleData,
+  onEvent: function (event, data) {
+    if (event === 'mode-changed') {
+      console.log('mode index', data.value)
+    }
+
+    // return true to stop propagation up to studio or parent components
+  }
 });
 ```
