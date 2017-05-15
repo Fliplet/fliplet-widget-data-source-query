@@ -69,9 +69,15 @@ let app = new Vue({
       });
     }
 
-    this.getDataSources();
+    this.getDataSources().then(() => {
+      this.isLoading = false;
+    }).catch(() => {
+      this.isLoading = false;
+    });
+    Fliplet.Widget.autosize();
   },
   data: {
+    isLoading: true,
     dataSources: null,
     selectedDataSource: null,
     selectedColumns: initialResult ? initialResult.columns : {},
@@ -214,6 +220,7 @@ let app = new Vue({
       this.showFilters = val;
     },
     selectedModeIdx(val) {
+      Vue.nextTick(() => Fliplet.Widget.autosize());
       Fliplet.Widget.emit('mode-changed', val);
     }
   },
@@ -221,14 +228,14 @@ let app = new Vue({
     getDataSources() {
       return Fliplet.DataSources.get()
           .then((data) => {
-            // setTimeout(() => {
             this.loadingError = null;
             this.dataSources = data;
 
             if (initialResult) {
               this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
             }
-            // }, 3000);
+
+            Vue.nextTick(() => Fliplet.Widget.autosize());
           })
           .catch((err) => {
             console.error(err);
@@ -283,7 +290,6 @@ let app = new Vue({
 
 // Fired when the external save button is clicked
 Fliplet.Widget.onSaveRequest(() => {
-
   // Send back the result
   Fliplet.Widget.save(JSON.parse(JSON.stringify({
     settings: settings,
