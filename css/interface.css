@@ -26,6 +26,10 @@ label {
     color: #14505e;
 }
 
+input + label:hover {
+    cursor: pointer;
+}
+
 #link-action .form-group {
     margin-bottom: 0;
 }
