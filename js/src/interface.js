@@ -291,10 +291,7 @@ let app = new Vue({
 // Fired when the external save button is clicked
 Fliplet.Widget.onSaveRequest(() => {
   // Send back the result
-  Fliplet.Widget.save(JSON.parse(JSON.stringify({
-    settings: settings,
-    result: app.result
-  }))).then(() => {
+  Fliplet.Widget.save(app.result).then(() => {
     // Tell the UI this widget has finished
     Fliplet.Widget.complete();
   });
