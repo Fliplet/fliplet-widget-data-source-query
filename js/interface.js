@@ -370,7 +370,8 @@
 	        }
 	
 	        Vue.nextTick(function () {
-	          return Fliplet.Widget.autosize();
+	          $('select.hidden-select').trigger('change');
+	          Fliplet.Widget.autosize();
 	        });
 	      }).catch(function (err) {
 	        console.error(err);
@@ -396,12 +397,20 @@
 	        delete newSelectedColumns[key];
 	      }
 	      this.selectedColumns = newSelectedColumns;
+	      Vue.nextTick(function () {
+	        $('select.hidden-select').trigger('change');
+	        Fliplet.Widget.autosize();
+	      });
 	    },
 	    onDataSourceSelection: function onDataSourceSelection() {
 	      if (this.selectedDataSource) {
 	        this.selectedColumns = {};
 	        this.filters = [];
 	      }
+	      Vue.nextTick(function () {
+	        $('select.hidden-select').trigger('change');
+	        Fliplet.Widget.autosize();
+	      });
 	    }
 	  },
 	  components: {

@@ -237,7 +237,10 @@ let app = new Vue({
               this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
             }
 
-            Vue.nextTick(() => Fliplet.Widget.autosize());
+            Vue.nextTick(() => {
+              $('select.hidden-select').trigger('change');
+              Fliplet.Widget.autosize();
+            });
           })
           .catch((err) => {
             console.error(err);
@@ -261,12 +264,20 @@ let app = new Vue({
         delete newSelectedColumns[key];
       }
       this.selectedColumns = newSelectedColumns;
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        Fliplet.Widget.autosize();
+      });
     },
     onDataSourceSelection() {
       if (this.selectedDataSource) {
         this.selectedColumns = {};
         this.filters = [];
       }
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        Fliplet.Widget.autosize();
+      });
     }
   },
   components: {
