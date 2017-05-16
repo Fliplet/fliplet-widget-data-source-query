@@ -274,7 +274,7 @@ let app = new Vue({
       });
       Vue.nextTick(() => {
         $('select.hidden-select').trigger('change');
-        window.scrollTo(0, document.body.scrollHeight);        
+        window.scrollTo(0, document.body.scrollHeight);
       });
     },
     updateSelectedColumns(key, val) {
