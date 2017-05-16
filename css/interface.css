@@ -14,7 +14,6 @@ body {
   color: #14505e;
 }
 
-
 #query-form {
   height: 0;
   opacity: 0;
@@ -67,6 +66,18 @@ body {
   color: white;
   padding: 0.4rem 0.6rem;
   cursor: pointer;
+}
+
+.filters-toggle {
+  padding-top: 7px;
+}
+
+.filter {
+  margin-bottom: 10px;
+}
+
+.filter > .form-group {
+  margin-bottom: 0;
 }
 
 .filter .col-sm-8 {

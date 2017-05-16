@@ -214,19 +214,37 @@ let app = new Vue({
       if (arr.length === 0 && this.showFilters && this.selectedDataSource) {
         this.addDefaultFilter();
       }
+      Vue.nextTick(() => Fliplet.Widget.autosize());
     },
     applyFilters(val) {
       if (val === true && this.filters.length === 0) {
         this.addDefaultFilter();
       }
       this.showFilters = val;
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        Fliplet.Widget.autosize();
+      });
     },
     selectedModeIdx(val) {
       Vue.nextTick(() => Fliplet.Widget.autosize());
       Fliplet.Widget.emit('mode-changed', val);
+    },
+    showFilters() {
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        Fliplet.Widget.autosize();
+      });
     }
   },
   methods: {
+    toggleFilters(show) {
+      if (typeof show === 'undefined') {
+        this.showFilters = !this.showFilters;
+        return
+      }
+      this.showFilters = show;
+    },
     getDataSources() {
       return Fliplet.DataSources.get()
           .then((data) => {
@@ -254,7 +272,10 @@ let app = new Vue({
         value: '',
         ignoreCase: false
       });
-      Vue.nextTick(() => window.scrollTo(0, document.body.scrollHeight));
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        window.scrollTo(0, document.body.scrollHeight);        
+      });
     },
     updateSelectedColumns(key, val) {
       let newSelectedColumns = Object.assign({}, this.selectedColumns);

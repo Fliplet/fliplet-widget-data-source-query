@@ -343,21 +343,41 @@
 	      if (arr.length === 0 && this.showFilters && this.selectedDataSource) {
 	        this.addDefaultFilter();
 	      }
+	      Vue.nextTick(function () {
+	        return Fliplet.Widget.autosize();
+	      });
 	    },
 	    applyFilters: function applyFilters(val) {
 	      if (val === true && this.filters.length === 0) {
 	        this.addDefaultFilter();
 	      }
 	      this.showFilters = val;
+	      Vue.nextTick(function () {
+	        $('select.hidden-select').trigger('change');
+	        Fliplet.Widget.autosize();
+	      });
 	    },
 	    selectedModeIdx: function selectedModeIdx(val) {
 	      Vue.nextTick(function () {
 	        return Fliplet.Widget.autosize();
 	      });
 	      Fliplet.Widget.emit('mode-changed', val);
+	    },
+	    showFilters: function showFilters() {
+	      Vue.nextTick(function () {
+	        $('select.hidden-select').trigger('change');
+	        Fliplet.Widget.autosize();
+	      });
 	    }
 	  },
 	  methods: {
+	    toggleFilters: function toggleFilters(show) {
+	      if (typeof show === 'undefined') {
+	        this.showFilters = !this.showFilters;
+	        return;
+	      }
+	      this.showFilters = show;
+	    },
 	    getDataSources: function getDataSources() {
 	      var _this2 = this;
 	
@@ -386,7 +406,8 @@
 	        ignoreCase: false
 	      });
 	      Vue.nextTick(function () {
-	        return window.scrollTo(0, document.body.scrollHeight);
+	        $('select.hidden-select').trigger('change');
+	        window.scrollTo(0, document.body.scrollHeight);
 	      });
 	    },
 	    updateSelectedColumns: function updateSelectedColumns(key, val) {

@@ -93,45 +93,43 @@
             </label>
           </div>
           <div class="pull-right">
-            <span v-if="showFilters" class="btn btn-link" v-on:click="showFilters = false">Hide filters​</span>
-            <span v-if="!showFilters && filters.length && dataSources" class="btn btn-link"
-                  v-on:click="showFilters = true">Show filters​</span>
+            <a v-if="showFilters" class="filters-toggle" href="#" v-on:click.prevent="toggleFilters(false)"><i class="fa fa-chevron-up"></i> Hide filters​</a>
+            <a v-if="!showFilters && filters.length && dataSources" class="filters-toggle" href="#"
+                  v-on:click.prevent="toggleFilters(true)"><i class="fa fa-chevron-down"></i> Show filters​</a>
           </div>
         </div>
       </div>
 
-      <div class="form-group filter container-fluid" v-for="(filter, index) in filters" v-if="showFilters">
-        <div class="row">
-          <div class="col-sm-4 control-label"></div>
-          <div class="col-sm-8">
+      <div class="filter" v-for="(filter, index) in filters" v-if="showFilters">
+        <div class="form-group">
+          <div class="col-sm-8 col-sm-push-4">
             <label class="select-proxy-display">
-              <span class="icon fa fa-chevron-down"></span>
               <select data-label="select" class="hidden-select form-control" v-model="filter.column">
                 <option :value="column" v-for="column in selectedDataSource.columns">\{{column}}</option>
               </select>
+              <span class="icon fa fa-chevron-down"></span>
+              <span class="select-value-proxy"></span>
             </label>
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-4 control-label"></div>
-          <div class="col-sm-8">
+        <div class="form-group">
+          <div class="col-sm-8 col-sm-push-4">
             <label class="select-proxy-display">
-              <span class="icon fa fa-chevron-down"></span>
               <select data-label="select" class="hidden-select form-control" v-model="filter.operator">
                 <option :value="operator" v-for="operator in operators">\{{operator}}</option>
               </select>
+              <span class="icon fa fa-chevron-down"></span>
+              <span class="select-value-proxy"></span>
             </label>
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-4 control-label"></div>
-          <div class="col-sm-8">
+        <div class="form-group">
+          <div class="col-sm-8 col-sm-push-4">
             <input type="text" class="form-control" v-model="filter.value"/>
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-4 control-label"></div>
-          <div class="col-sm-8">
+        <div class="form-group">
+          <div class="col-sm-8 col-sm-push-4">
             <div class="checkbox checkbox-icon">
               <input type="checkbox" :id="'ignore-case-' + index" v-model="filter.ignoreCase"/>
               <label :for="'ignore-case-' + index">
@@ -143,12 +141,13 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-4 control-label"></div>
-          <div class="col-sm-8">
-            <div class="icon fa fa-minus grey-icon-button pull-left" v-on:click="filters.splice(index, 1)"></div>
-            <div v-if="index === (filters.length - 1)" class="icon fa fa-plus blue-icon-button pull-right"
-                 v-on:click="addDefaultFilter"></div>
+        <div class="form-group">
+          <div class="col-sm-8 col-sm-push-4">
+            <p>
+              <span class="icon fa fa-minus grey-icon-button pull-left" v-on:click="filters.splice(index, 1)"></span>
+              <span v-if="index === (filters.length - 1)" class="icon fa fa-plus blue-icon-button pull-right"
+                   v-on:click="addDefaultFilter"></span>
+            </p>
           </div>
         </div>
       </div>
