@@ -95,6 +95,8 @@
 	  });
 	});
 	
+	$(window).on('resize', Fliplet.Widget.autosize);
+	
 	var app = new Vue({
 	  el: '#app',
 	  created: function created() {

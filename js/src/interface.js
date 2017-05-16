@@ -18,6 +18,8 @@ settings.modes.forEach((mode) => {
   })
 })
 
+$(window).on('resize', Fliplet.Widget.autosize);
+
 let app = new Vue({
   el: '#app',
   created() {
