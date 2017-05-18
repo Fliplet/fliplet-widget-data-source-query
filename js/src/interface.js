@@ -18,6 +18,8 @@ settings.modes.forEach((mode) => {
   })
 })
 
+$(window).on('resize', Fliplet.Widget.autosize);
+
 let app = new Vue({
   el: '#app',
   created() {
@@ -69,9 +71,15 @@ let app = new Vue({
       });
     }
 
-    this.getDataSources();
+    this.getDataSources().then(() => {
+      this.isLoading = false;
+    }).catch(() => {
+      this.isLoading = false;
+    });
+    Fliplet.Widget.autosize();
   },
   data: {
+    isLoading: true,
     dataSources: null,
     selectedDataSource: null,
     selectedColumns: initialResult ? initialResult.columns : {},
@@ -206,29 +214,52 @@ let app = new Vue({
       if (arr.length === 0 && this.showFilters && this.selectedDataSource) {
         this.addDefaultFilter();
       }
+      this.onSelectChange();
+    },
+    selectedColumns() {
+      this.onSelectChange();
+    },
+    selectedDataSource() {
+      this.onSelectChange();
     },
     applyFilters(val) {
       if (val === true && this.filters.length === 0) {
         this.addDefaultFilter();
       }
       this.showFilters = val;
+      this.onSelectChange();
     },
     selectedModeIdx(val) {
+      Vue.nextTick(() => Fliplet.Widget.autosize());
       Fliplet.Widget.emit('mode-changed', val);
+    },
+    showFilters() {
+      this.onSelectChange();
     }
   },
   methods: {
+    onSelectChange(){
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        Fliplet.Widget.autosize();
+      });
+    },
+    toggleFilters(show) {
+      if (typeof show === 'undefined') {
+        this.showFilters = !this.showFilters;
+        return
+      }
+      this.showFilters = show;
+    },
     getDataSources() {
       return Fliplet.DataSources.get()
           .then((data) => {
-            // setTimeout(() => {
             this.loadingError = null;
             this.dataSources = data;
 
             if (initialResult) {
               this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
             }
-            // }, 3000);
           })
           .catch((err) => {
             console.error(err);
@@ -242,7 +273,10 @@ let app = new Vue({
         value: '',
         ignoreCase: false
       });
-      Vue.nextTick(() => window.scrollTo(0, document.body.scrollHeight));
+      Vue.nextTick(() => {
+        $('select.hidden-select').trigger('change');
+        window.scrollTo(0, document.body.scrollHeight);
+      });
     },
     updateSelectedColumns(key, val) {
       let newSelectedColumns = Object.assign({}, this.selectedColumns);
@@ -283,12 +317,8 @@ let app = new Vue({
 
 // Fired when the external save button is clicked
 Fliplet.Widget.onSaveRequest(() => {
-
   // Send back the result
-  Fliplet.Widget.save(JSON.parse(JSON.stringify({
-    settings: settings,
-    result: app.result
-  }))).then(() => {
+  Fliplet.Widget.save(JSON.parse(JSON.stringify(app.result))).then(() => {
     // Tell the UI this widget has finished
     Fliplet.Widget.complete();
   });
