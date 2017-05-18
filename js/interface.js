@@ -53,6 +53,10 @@
 
 	'use strict';
 	
+	var _stringify = __webpack_require__(87);
+	
+	var _stringify2 = _interopRequireDefault(_stringify);
+	
 	var _assign = __webpack_require__(2);
 	
 	var _assign2 = _interopRequireDefault(_assign);
@@ -343,19 +347,20 @@
 	      if (arr.length === 0 && this.showFilters && this.selectedDataSource) {
 	        this.addDefaultFilter();
 	      }
-	      Vue.nextTick(function () {
-	        return Fliplet.Widget.autosize();
-	      });
+	      this.onSelectChange();
+	    },
+	    selectedColumns: function selectedColumns() {
+	      this.onSelectChange();
+	    },
+	    selectedDataSource: function selectedDataSource() {
+	      this.onSelectChange();
 	    },
 	    applyFilters: function applyFilters(val) {
 	      if (val === true && this.filters.length === 0) {
 	        this.addDefaultFilter();
 	      }
 	      this.showFilters = val;
-	      Vue.nextTick(function () {
-	        $('select.hidden-select').trigger('change');
-	        Fliplet.Widget.autosize();
-	      });
+	      this.onSelectChange();
 	    },
 	    selectedModeIdx: function selectedModeIdx(val) {
 	      Vue.nextTick(function () {
@@ -364,13 +369,16 @@
 	      Fliplet.Widget.emit('mode-changed', val);
 	    },
 	    showFilters: function showFilters() {
+	      this.onSelectChange();
+	    }
+	  },
+	  methods: {
+	    onSelectChange: function onSelectChange() {
 	      Vue.nextTick(function () {
 	        $('select.hidden-select').trigger('change');
 	        Fliplet.Widget.autosize();
 	      });
-	    }
-	  },
-	  methods: {
+	    },
 	    toggleFilters: function toggleFilters(show) {
 	      if (typeof show === 'undefined') {
 	        this.showFilters = !this.showFilters;
@@ -388,11 +396,6 @@
 	        if (initialResult) {
 	          _this2.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
 	        }
-	
-	        Vue.nextTick(function () {
-	          $('select.hidden-select').trigger('change');
-	          Fliplet.Widget.autosize();
-	        });
 	      }).catch(function (err) {
 	        console.error(err);
 	        _this2.loadingError = err;
@@ -418,20 +421,12 @@
 	        delete newSelectedColumns[key];
 	      }
 	      this.selectedColumns = newSelectedColumns;
-	      Vue.nextTick(function () {
-	        $('select.hidden-select').trigger('change');
-	        Fliplet.Widget.autosize();
-	      });
 	    },
 	    onDataSourceSelection: function onDataSourceSelection() {
 	      if (this.selectedDataSource) {
 	        this.selectedColumns = {};
 	        this.filters = [];
 	      }
-	      Vue.nextTick(function () {
-	        $('select.hidden-select').trigger('change');
-	        Fliplet.Widget.autosize();
-	      });
 	    }
 	  },
 	  components: {
@@ -462,7 +457,7 @@
 	// Fired when the external save button is clicked
 	Fliplet.Widget.onSaveRequest(function () {
 	  // Send back the result
-	  Fliplet.Widget.save(app.result).then(function () {
+	  Fliplet.Widget.save(JSON.parse((0, _stringify2.default)(app.result))).then(function () {
 	    // Tell the UI this widget has finished
 	    Fliplet.Widget.complete();
 	  });
@@ -1971,6 +1966,22 @@
 	    , exp = {};
 	  exp[KEY] = exec(fn);
 	  $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
+	};
+
+/***/ },
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(88), __esModule: true };
+
+/***/ },
+/* 88 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var core  = __webpack_require__(7)
+	  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+	module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
+	  return $JSON.stringify.apply($JSON, arguments);
 	};
 
 /***/ }

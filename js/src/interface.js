@@ -214,30 +214,36 @@ let app = new Vue({
       if (arr.length === 0 && this.showFilters && this.selectedDataSource) {
         this.addDefaultFilter();
       }
-      Vue.nextTick(() => Fliplet.Widget.autosize());
+      this.onSelectChange();
+    },
+    selectedColumns() {
+      this.onSelectChange();
+    },
+    selectedDataSource() {
+      this.onSelectChange();
     },
     applyFilters(val) {
       if (val === true && this.filters.length === 0) {
         this.addDefaultFilter();
       }
       this.showFilters = val;
-      Vue.nextTick(() => {
-        $('select.hidden-select').trigger('change');
-        Fliplet.Widget.autosize();
-      });
+      this.onSelectChange();
     },
     selectedModeIdx(val) {
       Vue.nextTick(() => Fliplet.Widget.autosize());
       Fliplet.Widget.emit('mode-changed', val);
     },
     showFilters() {
+      this.onSelectChange();
+    }
+  },
+  methods: {
+    onSelectChange(){
       Vue.nextTick(() => {
         $('select.hidden-select').trigger('change');
         Fliplet.Widget.autosize();
       });
-    }
-  },
-  methods: {
+    },
     toggleFilters(show) {
       if (typeof show === 'undefined') {
         this.showFilters = !this.showFilters;
@@ -254,11 +260,6 @@ let app = new Vue({
             if (initialResult) {
               this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
             }
-
-            Vue.nextTick(() => {
-              $('select.hidden-select').trigger('change');
-              Fliplet.Widget.autosize();
-            });
           })
           .catch((err) => {
             console.error(err);
@@ -285,20 +286,12 @@ let app = new Vue({
         delete newSelectedColumns[key];
       }
       this.selectedColumns = newSelectedColumns;
-      Vue.nextTick(() => {
-        $('select.hidden-select').trigger('change');
-        Fliplet.Widget.autosize();
-      });
     },
     onDataSourceSelection() {
       if (this.selectedDataSource) {
         this.selectedColumns = {};
         this.filters = [];
       }
-      Vue.nextTick(() => {
-        $('select.hidden-select').trigger('change');
-        Fliplet.Widget.autosize();
-      });
     }
   },
   components: {
