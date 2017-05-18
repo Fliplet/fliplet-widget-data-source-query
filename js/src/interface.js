@@ -23,7 +23,7 @@ $(window).on('resize', Fliplet.Widget.autosize);
 let app = new Vue({
   el: '#app',
   created() {
-    if (initialResult) {
+    if (initialResult && initialResult.filters && initialResult.filters.$and) {
       this.filters = initialResult.filters.$and.map((filterDataEntry) => {
         let columnKey = Object.keys(filterDataEntry)[0];
         let innerObject = filterDataEntry[columnKey];
@@ -82,8 +82,8 @@ let app = new Vue({
     isLoading: true,
     dataSources: null,
     selectedDataSource: null,
-    selectedColumns: initialResult ? initialResult.columns : {},
-    applyFilters: initialResult ? initialResult.applyFilters : false,
+    selectedColumns: (initialResult && initialResult.columns) ? initialResult.columns : {},
+    applyFilters: (initialResult && initialResult.applyFilters) ? initialResult.applyFilters : false,
     showFilters: false,
     showModesSelector: settings.modes.length > 1,
     operators: ['is exactly', 'contains', 'begins with', 'ends with', 'like'],
@@ -91,7 +91,7 @@ let app = new Vue({
     filters: [],
     modesDescription: settings.modesDescription,
     modes: settings.modes,
-    selectedModeIdx: initialResult ? initialResult.selectedModeIdx : 0
+    selectedModeIdx: (initialResult && initialResult.selectedModeIdx) ? initialResult.selectedModeIdx : 0
   },
   computed: {
     selectedMode() {
@@ -217,6 +217,9 @@ let app = new Vue({
       this.onSelectChange();
     },
     selectedColumns() {
+      this.onSelectChange();
+    },
+    dataSources() {
       this.onSelectChange();
     },
     selectedDataSource() {
