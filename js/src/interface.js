@@ -223,7 +223,14 @@ let app = new Vue({
       this.onSelectChange();
     },
     selectedDataSource() {
+      var dataSource = this.selectedDataSource;
       this.onSelectChange();
+      if (dataSource) {
+        this.selectedColumns = {};
+        this.filters = [];
+      }
+
+      Fliplet.Widget.emit('data-source-changed', dataSource);
     },
     applyFilters(val) {
       if (val === true && this.filters.length === 0) {
@@ -289,12 +296,6 @@ let app = new Vue({
         delete newSelectedColumns[key];
       }
       this.selectedColumns = newSelectedColumns;
-    },
-    onDataSourceSelection() {
-      if (this.selectedDataSource) {
-        this.selectedColumns = {};
-        this.filters = [];
-      }
     }
   },
   components: {
