@@ -222,13 +222,15 @@ let app = new Vue({
     dataSources() {
       this.onSelectChange();
     },
-    selectedDataSource(val) {
+    selectedDataSource() {
+      var dataSource = this.selectedDataSource;
       this.onSelectChange();
-      if (val) {
+      if (dataSource) {
         this.selectedColumns = {};
         this.filters = [];
       }
-      Fliplet.Widget.emit('data-source-changed', this.selectedDataSource);
+
+      Fliplet.Widget.emit('data-source-changed', dataSource);
     },
     applyFilters(val) {
       if (val === true && this.filters.length === 0) {

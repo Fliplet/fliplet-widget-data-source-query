@@ -11,7 +11,7 @@
         <div class="col-sm-8">
           <label class="select-proxy-display">
             <select data-label="select" class="hidden-select form-control" v-model="selectedDataSource"
-                    v-on:change="selectedDataSource" :disabled="!dataSources">
+                    :disabled="!dataSources">
               <option :value="null">-- \{{ dataSources ? 'Select a data source' : 'Please wait' }}</option>
               <option :value="dataSource" v-for="dataSource in dataSources">\{{dataSource.name}}</option>
             </select>
