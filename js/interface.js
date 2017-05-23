@@ -81,6 +81,7 @@
 	
 	var data = Fliplet.Widget.getData();
 	var initialResult = data.result;
+	var firstLoad = true;
 	var settings = data.settings;
 	
 	if (!settings.modes) {
@@ -358,7 +359,8 @@
 	    selectedDataSource: function selectedDataSource() {
 	      var dataSource = this.selectedDataSource;
 	      this.onSelectChange();
-	      if (dataSource) {
+	      if (dataSource && !firstLoad) {
+	        firstLoad = false;
 	        this.selectedColumns = {};
 	        this.filters = [];
 	      }
@@ -405,6 +407,7 @@
 	
 	        if (initialResult) {
 	          _this2.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
+	          Fliplet.Widget.emit('data-source-changed', _this2.selectedDataSource);
 	        }
 	      }).catch(function (err) {
 	        console.error(err);

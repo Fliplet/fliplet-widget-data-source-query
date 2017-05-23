@@ -1,5 +1,6 @@
 let data = Fliplet.Widget.getData();
 let initialResult = data.result;
+var firstLoad = true;
 let settings = data.settings;
 
 if (!settings.modes) {
@@ -225,7 +226,8 @@ let app = new Vue({
     selectedDataSource() {
       var dataSource = this.selectedDataSource;
       this.onSelectChange();
-      if (dataSource) {
+      if (dataSource && !firstLoad) {
+        firstLoad = false;
         this.selectedColumns = {};
         this.filters = [];
       }
@@ -269,6 +271,7 @@ let app = new Vue({
 
             if (initialResult) {
               this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
+              Fliplet.Widget.emit('data-source-changed', this.selectedDataSource);
             }
           })
           .catch((err) => {
