@@ -2,6 +2,20 @@ let data = Fliplet.Widget.getData();
 let initialResult = data.result;
 let settings = data.settings;
 
+function getInitialColumns() {
+  if (initialResult && initialResult.columns) {
+    return initialResult.columns;
+  }
+  return {};
+}
+
+function getInitialFilters() {
+  if (initialResult && initialResult.applyFilters) {
+    return initialResult.applyFilters;
+  }
+  return false;
+}
+
 if (!settings.modes) {
   settings.modes = [{
     columns: settings.columns || []
@@ -82,8 +96,8 @@ let app = new Vue({
     isLoading: true,
     dataSources: null,
     selectedDataSource: null,
-    selectedColumns: (initialResult && initialResult.columns) ? initialResult.columns : {},
-    applyFilters: (initialResult && initialResult.applyFilters) ? initialResult.applyFilters : false,
+    selectedColumns: getInitialColumns(),
+    applyFilters: getInitialFilters(),
     showFilters: false,
     showModesSelector: settings.modes.length > 1,
     operators: ['is exactly', 'contains', 'begins with', 'ends with', 'like'],
@@ -222,8 +236,7 @@ let app = new Vue({
     dataSources() {
       this.onSelectChange();
     },
-    selectedDataSource() {
-      var dataSource = this.selectedDataSource;
+    selectedDataSource(dataSource) {
       this.onSelectChange();
       if (dataSource) {
         this.selectedColumns = {};
