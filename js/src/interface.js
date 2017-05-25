@@ -236,9 +236,10 @@ let app = new Vue({
     dataSources() {
       this.onSelectChange();
     },
-    selectedDataSource(dataSource) {
+    selectedDataSource(dataSource, oldValue) {
       this.onSelectChange();
-      if (dataSource) {
+      if (oldValue) {
+        // Reset columsn and filters if switching from a non-null value
         this.selectedColumns = {};
         this.filters = [];
       }

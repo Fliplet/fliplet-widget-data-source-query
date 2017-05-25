@@ -369,9 +369,10 @@
 	    dataSources: function dataSources() {
 	      this.onSelectChange();
 	    },
-	    selectedDataSource: function selectedDataSource(dataSource) {
+	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
 	      this.onSelectChange();
-	      if (dataSource) {
+	      if (oldValue) {
+	        // Reset columsn and filters if switching from a non-null value
 	        this.selectedColumns = {};
 	        this.filters = [];
 	      }
