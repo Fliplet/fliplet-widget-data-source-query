@@ -263,18 +263,18 @@ let app = new Vue({
     },
     getDataSources() {
       return Fliplet.DataSources.get()
-          .then((data) => {
-            this.loadingError = null;
-            this.dataSources = data;
+        .then((data) => {
+          this.loadingError = null;
+          this.dataSources = data;
 
-            if (initialResult) {
-              this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            this.loadingError = err;
-          });
+          if (initialResult) {
+            this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          this.loadingError = err;
+        });
     },
     addDefaultFilter() {
       this.filters.push({
