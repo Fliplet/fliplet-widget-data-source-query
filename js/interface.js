@@ -170,8 +170,7 @@
 
       Fliplet.Studio.onMessage(function(event) {
         if (event.data && event.data.event === 'overlay-close') {
-          this.getDataSources();
-          this.onSelectChange();
+          _this.reloadDataSources(event.data.data.dataSourceId);
         }
       });
 	
@@ -422,7 +421,11 @@
 	    getDataSources: function getDataSources() {
 	      var _this2 = this;
 	
-	      return Fliplet.DataSources.get().then(function (data) {
+	      return Fliplet.DataSources.get({
+          type: null
+        }, {
+          cache: false
+        }).then(function (data) {
 	        _this2.loadingError = null;
 	        _this2.dataSources = data;
 	
@@ -434,6 +437,25 @@
 	        _this2.loadingError = err;
 	      });
 	    },
+      reloadDataSources: function reloadDataSources(dataSourceId) {
+        var _this2 = this;
+  
+        return Fliplet.DataSources.get({
+          type: null
+        }, {
+          cache: false
+        }).then(function (data) {
+          _this2.loadingError = null;
+          _this2.dataSources = data;
+  
+          if (dataSourceId) {
+            _this2.selectedDataSource = _.find(data, { id: dataSourceId });
+          }
+        }).catch(function (err) {
+          console.error(err);
+          _this2.loadingError = err;
+        });
+      },
       createDataSource: function() {
         var $vm = this;
         var name = prompt('Please type a name for your data source:');
