@@ -167,6 +167,13 @@
 	        return filter;
 	      });
 	    }
+
+      Fliplet.Studio.onMessage(function(event) {
+        if (event.data && event.data.event === 'overlay-close') {
+          this.getDataSources();
+          this.onSelectChange();
+        }
+      });
 	
 	    this.getDataSources().then(function () {
 	      _this.isLoading = false;
@@ -444,10 +451,15 @@
         });
       },
       manageDataSource: function(dataSourceId) {
-        console.log(dataSourceId);
-        // @TODO:
-        // Get data source ID
-        // Open overlay to data sources provider with ID
+        Fliplet.Studio.emit('overlay', {
+          name: 'widget',
+          options: {
+            size: 'large',
+            package: 'com.fliplet.data-sources',
+            title: 'Edit Data Sources',
+            data: { dataSourceId: dataSourceId }
+          }
+        });
       },
 	    addDefaultFilter: function addDefaultFilter() {
 	      this.filters.push({

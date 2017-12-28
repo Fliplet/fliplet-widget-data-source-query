@@ -25,7 +25,7 @@
             </span>
           </label>
           <small>or just <a href="#" v-on:click.prevent="createDataSource">create a new data source</a></small>
-          <div v-if="manageDataBtn" class="btn btn-default" id="manage-data" v-on:click.prevent="manageDataSource(selectedDataSource.id)">Edit data</div>
+          <div v-if="manageDataBtn" class="btn btn-default" id="manage-data" v-on:click="manageDataSource(selectedDataSource.id)">Edit data</div>
         </div>
       </div>
 
