@@ -167,6 +167,12 @@
 	        return filter;
 	      });
 	    }
+
+      Fliplet.Studio.onMessage(function(event) {
+        if (event.data && event.data.event === 'overlay-close') {
+          _this.reloadDataSources(event.data.data.dataSourceId);
+        }
+      });
 	
 	    this.getDataSources().then(function () {
 	      _this.isLoading = false;
@@ -189,7 +195,8 @@
 	    filters: [],
 	    modesDescription: settings.modesDescription,
 	    modes: settings.modes,
-	    selectedModeIdx: initialResult && initialResult.selectedModeIdx ? initialResult.selectedModeIdx : 0
+	    selectedModeIdx: initialResult && initialResult.selectedModeIdx ? initialResult.selectedModeIdx : 0,
+	    manageDataBtn: false
 	  },
 	  computed: {
 	    selectedMode: function selectedMode() {
@@ -370,6 +377,7 @@
 	      this.onSelectChange();
 	    },
 	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
+        this.manageDataBtn = dataSource && dataSource !== '';
 	      this.onSelectChange();
 	      if (oldValue) {
 	        // Reset selected columns and filters if switching from a non-null value
@@ -413,7 +421,11 @@
 	    getDataSources: function getDataSources() {
 	      var _this2 = this;
 	
-	      return Fliplet.DataSources.get().then(function (data) {
+	      return Fliplet.DataSources.get({
+          type: null
+        }, {
+          cache: false
+        }).then(function (data) {
 	        _this2.loadingError = null;
 	        _this2.dataSources = data;
 	
@@ -425,6 +437,52 @@
 	        _this2.loadingError = err;
 	      });
 	    },
+      reloadDataSources: function reloadDataSources(dataSourceId) {
+        var _this2 = this;
+  
+        return Fliplet.DataSources.get({
+          type: null
+        }, {
+          cache: false
+        }).then(function (data) {
+          _this2.loadingError = null;
+          _this2.dataSources = data;
+  
+          if (dataSourceId) {
+            _this2.selectedDataSource = _.find(data, { id: dataSourceId });
+          }
+        }).catch(function (err) {
+          console.error(err);
+          _this2.loadingError = err;
+        });
+      },
+      createDataSource: function() {
+        var $vm = this;
+        var name = prompt('Please type a name for your data source:');
+
+        if (!name) {
+          return;
+        }
+
+        Fliplet.DataSources.create({
+          name: name,
+          organizationId: Fliplet.Env.get('organizationId')
+        }).then(function(ds) {
+          $vm.dataSources.push(ds);
+          $vm.selectedDataSource = ds;
+        });
+      },
+      manageDataSource: function(dataSourceId) {
+        Fliplet.Studio.emit('overlay', {
+          name: 'widget',
+          options: {
+            size: 'large',
+            package: 'com.fliplet.data-sources',
+            title: 'Edit Data Sources',
+            data: { dataSourceId: dataSourceId }
+          }
+        });
+      },
 	    addDefaultFilter: function addDefaultFilter() {
 	      this.filters.push({
 	        column: this.selectedDataSource.columns[0],
