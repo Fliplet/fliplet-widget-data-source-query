@@ -12,7 +12,10 @@
           <label class="select-proxy-display">
             <select data-label="select" class="hidden-select form-control" v-model="selectedDataSource"
                     :disabled="!dataSources">
-              <option :value="null">-- \{{ dataSources ? 'Select a data source' : 'Please wait' }}</option>
+              <option value="none">-- \{{ dataSources ? 'Select a data source' : 'Please wait' }}</option>
+              <option disabled>------</option>
+              <option value="new">Create a new data source</option>
+              <option disabled>------</option>
               <option :value="dataSource" v-for="dataSource in dataSources">\{{dataSource.name}}</option>
             </select>
             <span class="icon fa fa-chevron-down"></span>
@@ -24,8 +27,7 @@
               <template v-else>-- Please wait</template>
             </span>
           </label>
-          <small>or just <a href="#" v-on:click.prevent="createDataSource">create a new data source</a></small>
-          <div v-if="manageDataBtn" class="btn btn-default" id="manage-data" v-on:click="manageDataSource(selectedDataSource.id)">Edit data</div>
+          <small v-if="manageDataBtn"><a href="#" v-on:click.prevent="manageDataSource(selectedDataSource.id)">Edit data source</a></small>
         </div>
       </div>
 

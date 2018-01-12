@@ -377,7 +377,10 @@
 	      this.onSelectChange();
 	    },
 	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
-        this.manageDataBtn = dataSource && dataSource !== '';
+        this.manageDataBtn = dataSource && dataSource !== 'none' && dataSource !== 'new';
+        if (dataSource === 'new') {
+          this.createDataSource();
+        }
 	      this.onSelectChange();
 	      if (oldValue) {
 	        // Reset selected columns and filters if switching from a non-null value
@@ -460,9 +463,16 @@
         var $vm = this;
         var name = prompt('Please type a name for your data source:');
 
-        if (!name) {
-          return;
-        }
+        if (name === null) {
+	        $vm.selectedDataSource = 'none';
+	        return;
+	      }
+
+	      if (name === '') {
+	        $vm.selectedDataSource = 'none';
+	        alert('You must enter a data source name');
+	        return;
+	      }
 
         Fliplet.DataSources.create({
           name: name,
@@ -479,7 +489,11 @@
             size: 'large',
             package: 'com.fliplet.data-sources',
             title: 'Edit Data Sources',
-            data: { dataSourceId: dataSourceId }
+            classes: 'data-source-overlay',
+            data: {
+              context: 'overlay',
+              dataSourceId: dataSourceId
+            }
           }
         });
       },
