@@ -185,7 +185,7 @@
 	  data: {
 	    isLoading: true,
 	    dataSources: null,
-	    selectedDataSource: null,
+	    selectedDataSource: 'none',
 	    selectedColumns: getInitialColumns(),
 	    applyFilters: getInitialFilters(),
 	    showFilters: false,
