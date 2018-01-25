@@ -488,12 +488,12 @@
 	      var name = prompt('Please type a name for your data source:');
 	
 	      if (name === null) {
-	        this.selectedDataSource = 'none';
+	        this.selectedDataSource = null;
 	        return;
 	      }
 	
 	      if (name === '') {
-	        this.selectedDataSource = 'none';
+	        this.selectedDataSource = null;
 	        alert('You must enter a data source name');
 	        return;
 	      }
