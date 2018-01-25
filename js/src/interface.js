@@ -85,6 +85,12 @@ let app = new Vue({
       });
     }
 
+    Fliplet.Studio.onMessage((event) => {
+      if (event.data && event.data.event === 'overlay-close') {
+        this.reloadDataSources(event.data.data.dataSourceId);
+      }
+    });
+
     this.getDataSources().then(() => {
       this.isLoading = false;
     }).catch(() => {
@@ -105,7 +111,8 @@ let app = new Vue({
     filters: [],
     modesDescription: settings.modesDescription,
     modes: settings.modes,
-    selectedModeIdx: (initialResult && initialResult.selectedModeIdx) ? initialResult.selectedModeIdx : 0
+    selectedModeIdx: (initialResult && initialResult.selectedModeIdx) ? initialResult.selectedModeIdx : 0,
+    manageDataBtn: false
   },
   computed: {
     selectedMode() {
@@ -237,6 +244,11 @@ let app = new Vue({
       this.onSelectChange();
     },
     selectedDataSource(dataSource, oldValue) {
+      this.manageDataBtn = dataSource && dataSource !== null && dataSource !== 'new';
+      if (dataSource === 'new') {
+        this.createDataSource();
+      }
+      
       this.onSelectChange();
       if (oldValue) {
         // Reset selected columns and filters if switching from a non-null value
@@ -276,7 +288,11 @@ let app = new Vue({
       this.showFilters = show;
     },
     getDataSources() {
-      return Fliplet.DataSources.get()
+      return Fliplet.DataSources.get({
+        type: null
+      }, {
+        cache: false
+      })
         .then((data) => {
           this.loadingError = null;
           this.dataSources = data;
@@ -310,6 +326,60 @@ let app = new Vue({
         delete newSelectedColumns[key];
       }
       this.selectedColumns = newSelectedColumns;
+    },
+    reloadDataSources: function reloadDataSources(dataSourceId) {
+      return Fliplet.DataSources.get({
+        type: null
+      }, {
+        cache: false
+      }).then((data) => {
+        this.loadingError = null;
+        this.dataSources = data;
+
+        if (dataSourceId) {
+          this.selectedDataSource = _.find(data, { id: dataSourceId });
+        }
+      }).catch(function (err) {
+        console.error(err);
+        this.loadingError = err;
+      });
+    },
+    createDataSource: function () {
+      var name = prompt('Please type a name for your data source:');
+
+      if (name === null) {
+        this.selectedDataSource = 'none';
+        return;
+      }
+
+      if (name === '') {
+        this.selectedDataSource = 'none';
+        alert('You must enter a data source name');
+        return;
+      }
+
+      Fliplet.DataSources.create({
+        name: name,
+        organizationId: Fliplet.Env.get('organizationId')
+      }).then((ds) => {
+        this.dataSources.push(ds);
+        this.selectedDataSource = ds;
+      });
+    },
+    manageDataSource: function (dataSourceId) {
+      Fliplet.Studio.emit('overlay', {
+        name: 'widget',
+        options: {
+          size: 'large',
+          package: 'com.fliplet.data-sources',
+          title: 'Edit Data Sources',
+          classes: 'data-source-overlay',
+          data: {
+            context: 'overlay',
+            dataSourceId: dataSourceId
+          }
+        }
+      });
     }
   },
   components: {
