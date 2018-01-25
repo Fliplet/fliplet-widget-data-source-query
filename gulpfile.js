@@ -10,7 +10,7 @@ const named = require('vinyl-named');
 const paths = {
   scripts: {
     entry: `js/src/interface.js`,
-    dest: `js/`
+    dest: `dist/`
   },
 };
 
