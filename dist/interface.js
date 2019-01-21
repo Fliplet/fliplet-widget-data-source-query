@@ -383,7 +383,7 @@
 	      }
 	
 	      this.onSelectChange();
-	      if (oldValue) {
+	      if (oldValue && dataSource.id !== oldValue.id) {
 	        // Reset selected columns and filters if switching from a non-null value
 	        this.selectedColumns = {};
 	        this.filters = [];
