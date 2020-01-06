@@ -485,25 +485,31 @@
 	    createDataSource: function createDataSource() {
 	      var _this4 = this;
 	
-	      var name = prompt('Please type a name for your data source:');
+	      Fliplet.Modal.prompt({
+	        title: 'Please type a name for your data source'
+	      }).then(function (result) {
+	        if (result === null) {
+	          return;
+	        }
 	
-	      if (name === null) {
-	        this.selectedDataSource = null;
-	        return;
-	      }
+	        var dataSourceName = result.trim();
 	
-	      if (name === '') {
-	        this.selectedDataSource = null;
-	        alert('You must enter a data source name');
-	        return;
-	      }
+	        if (!dataSourceName) {
+	          Fliplet.Modal.alert({
+	            message: 'You must enter a data source name'
+	          }).then(function () {
+	            _this4.createDataSource();
+	            return;
+	          });
+	        }
 	
-	      Fliplet.DataSources.create({
-	        name: name,
-	        organizationId: Fliplet.Env.get('organizationId')
-	      }).then(function (ds) {
-	        _this4.dataSources.push(ds);
-	        _this4.selectedDataSource = ds;
+	        Fliplet.DataSources.create({
+	          name: dataSourceName,
+	          organizationId: Fliplet.Env.get('organizationId')
+	        }).then(function (ds) {
+	          _this4.dataSources.push(ds);
+	          _this4.selectedDataSource = ds;
+	        });
 	      });
 	    },
 	    manageDataSource: function manageDataSource(dataSourceId) {

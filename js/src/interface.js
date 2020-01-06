@@ -248,7 +248,7 @@ let app = new Vue({
       if (dataSource === 'new') {
         this.createDataSource();
       }
-      
+
       this.onSelectChange();
       if (oldValue && dataSource.id !== oldValue.id) {
         // Reset selected columns and filters if switching from a non-null value
@@ -345,25 +345,31 @@ let app = new Vue({
       });
     },
     createDataSource: function () {
-      var name = prompt('Please type a name for your data source:');
+      Fliplet.Modal.prompt({
+        title: 'Please type a name for your data source',
+      }).then(result => {
+        if (result === null) {
+          return;
+        }
 
-      if (name === null) {
-        this.selectedDataSource = null;
-        return;
-      }
+        var dataSourceName = result.trim();
 
-      if (name === '') {
-        this.selectedDataSource = null;
-        alert('You must enter a data source name');
-        return;
-      }
+        if (!dataSourceName) {
+          Fliplet.Modal.alert({
+            message: 'You must enter a data source name'
+          }).then(() => {
+            this.createDataSource();
+            return;
+          });
+        }
 
-      Fliplet.DataSources.create({
-        name: name,
-        organizationId: Fliplet.Env.get('organizationId')
-      }).then((ds) => {
-        this.dataSources.push(ds);
-        this.selectedDataSource = ds;
+        Fliplet.DataSources.create({
+          name: dataSourceName,
+          organizationId: Fliplet.Env.get('organizationId')
+        }).then((ds) => {
+          this.dataSources.push(ds);
+          this.selectedDataSource = ds;
+        });
       });
     },
     manageDataSource: function (dataSourceId) {
