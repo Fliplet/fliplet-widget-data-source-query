@@ -383,7 +383,7 @@
 	      }
 	
 	      this.onSelectChange();
-	      if (oldValue && dataSource.id !== oldValue.id) {
+	      if (oldValue && dataSource && dataSource.id !== oldValue.id) {
 	        // Reset selected columns and filters if switching from a non-null value
 	        this.selectedColumns = {};
 	        this.filters = [];
@@ -489,6 +489,7 @@
 	        title: 'Please type a name for your data source'
 	      }).then(function (result) {
 	        if (result === null) {
+	          _this4.selectedDataSource = null;
 	          return;
 	        }
 	

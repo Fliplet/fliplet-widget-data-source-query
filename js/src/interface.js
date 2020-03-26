@@ -250,7 +250,7 @@ let app = new Vue({
       }
 
       this.onSelectChange();
-      if (oldValue && dataSource.id !== oldValue.id) {
+      if (oldValue && dataSource && dataSource.id !== oldValue.id) {
         // Reset selected columns and filters if switching from a non-null value
         this.selectedColumns = {};
         this.filters = [];
@@ -349,6 +349,7 @@ let app = new Vue({
         title: 'Please type a name for your data source',
       }).then(result => {
         if (result === null) {
+          this.selectedDataSource = null;
           return;
         }
 
