@@ -244,7 +244,7 @@ let app = new Vue({
       this.onSelectChange();
     },
     selectedDataSource(dataSource, oldValue) {
-      this.manageDataBtn = dataSource && dataSource !== null && dataSource !== 'new';
+      this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
       if (dataSource === 'new') {
         this.createDataSource();
       }
