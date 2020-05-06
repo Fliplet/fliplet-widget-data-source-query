@@ -377,7 +377,7 @@
 	      this.onSelectChange();
 	    },
 	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
-	      this.manageDataBtn = dataSource && dataSource !== null && dataSource !== 'new';
+	      this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
 	      if (dataSource === 'new') {
 	        this.createDataSource();
 	      }
