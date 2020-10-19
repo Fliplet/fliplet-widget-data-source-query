@@ -97,6 +97,7 @@ let app = new Vue({
     Vue.nextTick(() => {
       if (!this.dataSourceProvider) {
         const dataSourceID = initialResult && initialResult.dataSourceId;
+
         this.initDataSourceProvider(dataSourceID);
       }
     });

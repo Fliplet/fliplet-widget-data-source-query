@@ -182,6 +182,7 @@
 	    Vue.nextTick(function () {
 	      if (!_this2.dataSourceProvider) {
 	        var dataSourceID = initialResult && initialResult.dataSourceId;
+	
 	        _this2.initDataSourceProvider(dataSourceID);
 	      }
 	    });
