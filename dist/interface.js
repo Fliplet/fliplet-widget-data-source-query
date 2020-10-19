@@ -179,7 +179,15 @@
 	    }).catch(function () {
 	      _this.isLoading = false;
 	    });
+	
 	    Fliplet.Widget.autosize();
+	  },
+	  updated: function updated() {
+	    var _this2 = this;
+	
+	    Vue.nextTick(function () {
+	      if (!_this2.dataSourceProvider) _this2.initDataSourceProvider(data.dataSourceId);
+	    });
 	  },
 	
 	  data: {
@@ -194,6 +202,7 @@
 	    loadingError: null,
 	    filters: [],
 	    modesDescription: settings.modesDescription,
+	    dataSourceProvider: null,
 	    modes: settings.modes,
 	    selectedModeIdx: initialResult && initialResult.selectedModeIdx ? initialResult.selectedModeIdx : 0,
 	    manageDataBtn: false
@@ -377,6 +386,7 @@
 	      this.onSelectChange();
 	    },
 	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
+	      debugger;
 	      this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
 	      if (dataSource === 'new') {
 	        this.createDataSource();
@@ -409,6 +419,30 @@
 	    }
 	  },
 	  methods: {
+	    initDataSourceProvider: function initDataSourceProvider(currentDataSourceId) {
+	      var $vm = this;
+	      var dataSourceData = {
+	        dataSourceTitle: 'Select the data source containing the user information',
+	        dataSourceId: currentDataSourceId,
+	        appId: Fliplet.Env.get('appId'),
+	        default: {
+	          name: 'Profile data for ' + Fliplet.Env.get('appName'),
+	          entries: [],
+	          columns: []
+	        },
+	        accessRules: []
+	      };
+	
+	      this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
+	        selector: '#dataSourceProvider',
+	        data: dataSourceData,
+	        onEvent: function onEvent(event, dataSource) {
+	          if (event === 'dataSourceSelect') {
+	            $vm.selectedDataSource = dataSource;
+	          }
+	        }
+	      });
+	    },
 	    onSelectChange: function onSelectChange() {
 	      Vue.nextTick(function () {
 	        $('select.hidden-select').trigger('change');
@@ -423,22 +457,22 @@
 	      this.showFilters = show;
 	    },
 	    getDataSources: function getDataSources() {
-	      var _this2 = this;
+	      var _this3 = this;
 	
 	      return Fliplet.DataSources.get({
 	        type: null
 	      }, {
 	        cache: false
 	      }).then(function (data) {
-	        _this2.loadingError = null;
-	        _this2.dataSources = data;
+	        _this3.loadingError = null;
+	        _this3.dataSources = data;
 	
 	        if (initialResult) {
-	          _this2.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
+	          _this3.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
 	        }
 	      }).catch(function (err) {
 	        console.error(err);
-	        _this2.loadingError = err;
+	        _this3.loadingError = err;
 	      });
 	    },
 	    addDefaultFilter: function addDefaultFilter() {
@@ -464,18 +498,18 @@
 	    },
 	
 	    reloadDataSources: function reloadDataSources(dataSourceId) {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      return Fliplet.DataSources.get({
 	        type: null
 	      }, {
 	        cache: false
 	      }).then(function (data) {
-	        _this3.loadingError = null;
-	        _this3.dataSources = data;
+	        _this4.loadingError = null;
+	        _this4.dataSources = data;
 	
 	        if (dataSourceId) {
-	          _this3.selectedDataSource = _.find(data, { id: dataSourceId });
+	          _this4.selectedDataSource = _.find(data, { id: dataSourceId });
 	        }
 	      }).catch(function (err) {
 	        console.error(err);
@@ -483,13 +517,13 @@
 	      });
 	    },
 	    createDataSource: function createDataSource() {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      Fliplet.Modal.prompt({
 	        title: 'Please type a name for your data source'
 	      }).then(function (result) {
 	        if (result === null) {
-	          _this4.selectedDataSource = null;
+	          _this5.selectedDataSource = null;
 	          return;
 	        }
 	
@@ -499,7 +533,7 @@
 	          Fliplet.Modal.alert({
 	            message: 'You must enter a data source name'
 	          }).then(function () {
-	            _this4.createDataSource();
+	            _this5.createDataSource();
 	            return;
 	          });
 	        }
@@ -508,8 +542,8 @@
 	          name: dataSourceName,
 	          organizationId: Fliplet.Env.get('organizationId')
 	        }).then(function (ds) {
-	          _this4.dataSources.push(ds);
-	          _this4.selectedDataSource = ds;
+	          _this5.dataSources.push(ds);
+	          _this5.selectedDataSource = ds;
 	        });
 	      });
 	    },
@@ -534,10 +568,10 @@
 	      template: '<input type="text" class="form-control" value="" :trigger-update="tagsinputData"/>',
 	      props: ['tagsinputData', 'field', 'updateSelectedColumns', 'initArr'],
 	      mounted: function mounted() {
-	        var _this5 = this;
+	        var _this6 = this;
 	
 	        var $el = $(this.$el).change(function (event) {
-	          return _this5.updateSelectedColumns(_this5.field.key, $el.tagsinput('items'));
+	          return _this6.updateSelectedColumns(_this6.field.key, $el.tagsinput('items'));
 	        });
 	        $el.tagsinput(this.tagsinputData);
 	        if (this.initArr) {

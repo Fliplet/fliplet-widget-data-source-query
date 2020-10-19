@@ -90,13 +90,19 @@ let app = new Vue({
         this.reloadDataSources(event.data.data.dataSourceId);
       }
     });
-
+    
     this.getDataSources().then(() => {
       this.isLoading = false;
     }).catch(() => {
       this.isLoading = false;
     });
+    
     Fliplet.Widget.autosize();
+  },
+  updated() {
+    Vue.nextTick(() => {
+      if(!this.dataSourceProvider) this.initDataSourceProvider(data.dataSourceId);
+    })
   },
   data: {
     isLoading: true,
@@ -110,6 +116,7 @@ let app = new Vue({
     loadingError: null,
     filters: [],
     modesDescription: settings.modesDescription,
+    dataSourceProvider: null,
     modes: settings.modes,
     selectedModeIdx: (initialResult && initialResult.selectedModeIdx) ? initialResult.selectedModeIdx : 0,
     manageDataBtn: false
@@ -244,6 +251,7 @@ let app = new Vue({
       this.onSelectChange();
     },
     selectedDataSource(dataSource, oldValue) {
+      debugger;
       this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
       if (dataSource === 'new') {
         this.createDataSource();
@@ -274,6 +282,30 @@ let app = new Vue({
     }
   },
   methods: {
+    initDataSourceProvider(currentDataSourceId) {
+      const $vm = this;
+      let dataSourceData = {
+        dataSourceTitle: 'Select the data source containing the user information',
+        dataSourceId: currentDataSourceId,
+        appId: Fliplet.Env.get('appId'),
+        default: {
+          name: 'Profile data for ' + Fliplet.Env.get('appName'),
+          entries: [],
+          columns: []
+        },
+        accessRules: []
+      };
+
+      this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
+        selector: '#dataSourceProvider',
+        data: dataSourceData,
+        onEvent: function(event, dataSource) {
+          if (event === 'dataSourceSelect') {
+            $vm.selectedDataSource = dataSource;
+          }
+        }
+      });
+    },
     onSelectChange(){
       Vue.nextTick(() => {
         $('select.hidden-select').trigger('change');
@@ -300,6 +332,7 @@ let app = new Vue({
           if (initialResult) {
             this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
           }
+
         })
         .catch((err) => {
           console.error(err);
