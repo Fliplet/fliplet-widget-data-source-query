@@ -96,11 +96,8 @@ let app = new Vue({
   updated() {
     Vue.nextTick(() => {
       if (!this.dataSourceProvider) {
-        if (initialResult && initialResult.dataSourceId) {
-          this.initDataSourceProvider(initialResult.dataSourceId);
-        } else {
-          this.initDataSourceProvider();
-        }
+        const dataSourceID = initialResult && initialResult.dataSourceId;
+        this.initDataSourceProvider(dataSourceID);
       }
     });
   },
