@@ -168,12 +168,6 @@
 	      });
 	    }
 	
-	    Fliplet.Studio.onMessage(function (event) {
-	      if (event.data && event.data.event === 'overlay-close') {
-	        _this.reloadDataSources(event.data.data.dataSourceId);
-	      }
-	    });
-	
 	    this.getDataSources().then(function () {
 	      _this.isLoading = false;
 	    }).catch(function () {
@@ -383,15 +377,7 @@
 	    selectedColumns: function selectedColumns() {
 	      this.onSelectChange();
 	    },
-	    dataSources: function dataSources() {
-	      this.onSelectChange();
-	    },
 	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
-	      this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
-	      if (dataSource === 'new') {
-	        this.createDataSource();
-	      }
-	
 	      this.onSelectChange();
 	      if (oldValue && dataSource && dataSource.id !== oldValue.id) {
 	        // Reset selected columns and filters if switching from a non-null value
@@ -469,7 +455,6 @@
 	        cache: false
 	      }).then(function (data) {
 	        _this3.loadingError = null;
-	        _this3.dataSources = data;
 	
 	        if (initialResult) {
 	          _this3.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
@@ -501,56 +486,6 @@
 	      this.selectedColumns = newSelectedColumns;
 	    },
 	
-	    reloadDataSources: function reloadDataSources(dataSourceId) {
-	      var _this4 = this;
-	
-	      return Fliplet.DataSources.get({
-	        type: null
-	      }, {
-	        cache: false
-	      }).then(function (data) {
-	        _this4.loadingError = null;
-	        _this4.dataSources = data;
-	
-	        if (dataSourceId) {
-	          _this4.selectedDataSource = _.find(data, { id: dataSourceId });
-	        }
-	      }).catch(function (err) {
-	        console.error(err);
-	        this.loadingError = err;
-	      });
-	    },
-	    createDataSource: function createDataSource() {
-	      var _this5 = this;
-	
-	      Fliplet.Modal.prompt({
-	        title: 'Please type a name for your data source'
-	      }).then(function (result) {
-	        if (result === null) {
-	          _this5.selectedDataSource = null;
-	          return;
-	        }
-	
-	        var dataSourceName = result.trim();
-	
-	        if (!dataSourceName) {
-	          Fliplet.Modal.alert({
-	            message: 'You must enter a data source name'
-	          }).then(function () {
-	            _this5.createDataSource();
-	            return;
-	          });
-	        }
-	
-	        Fliplet.DataSources.create({
-	          name: dataSourceName,
-	          organizationId: Fliplet.Env.get('organizationId')
-	        }).then(function (ds) {
-	          _this5.dataSources.push(ds);
-	          _this5.selectedDataSource = ds;
-	        });
-	      });
-	    },
 	    manageDataSource: function manageDataSource(dataSourceId) {
 	      Fliplet.Studio.emit('overlay', {
 	        name: 'widget',
@@ -572,10 +507,10 @@
 	      template: '<input type="text" class="form-control" value="" :trigger-update="tagsinputData"/>',
 	      props: ['tagsinputData', 'field', 'updateSelectedColumns', 'initArr'],
 	      mounted: function mounted() {
-	        var _this6 = this;
+	        var _this4 = this;
 	
 	        var $el = $(this.$el).change(function (event) {
-	          return _this6.updateSelectedColumns(_this6.field.key, $el.tagsinput('items'));
+	          return _this4.updateSelectedColumns(_this4.field.key, $el.tagsinput('items'));
 	        });
 	        $el.tagsinput(this.tagsinputData);
 	        if (this.initArr) {
