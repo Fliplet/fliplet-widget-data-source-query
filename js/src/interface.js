@@ -19,7 +19,7 @@ function getInitialFilters() {
 if (!settings.modes) {
   settings.modes = [{
     columns: settings.columns || []
-  }]
+  }];
 }
 
 // Defaults
@@ -29,8 +29,8 @@ settings.modes.forEach((mode) => {
     if (!col.type || ['single', 'multiple'].indexOf(col.type) === -1) {
       col.type = 'single'
     }
-  })
-})
+  });
+});
 
 $(window).on('resize', Fliplet.Widget.autosize);
 
@@ -90,23 +90,28 @@ let app = new Vue({
         this.reloadDataSources(event.data.data.dataSourceId);
       }
     });
-    
+
     this.getDataSources().then(() => {
       this.isLoading = false;
     }).catch(() => {
       this.isLoading = false;
     });
-    
+
     Fliplet.Widget.autosize();
   },
   updated() {
     Vue.nextTick(() => {
-      if(!this.dataSourceProvider) this.initDataSourceProvider(data.dataSourceId);
-    })
+      if (!this.dataSourceProvider) {
+        if (initialResult && initialResult.dataSourceId) {
+          this.initDataSourceProvider(initialResult.dataSourceId);
+        } else {
+          this.initDataSourceProvider();
+        }
+      }
+    });
   },
   data: {
     isLoading: true,
-    dataSources: null,
     selectedDataSource: null,
     selectedColumns: getInitialColumns(),
     applyFilters: getInitialFilters(),
@@ -127,14 +132,10 @@ let app = new Vue({
     },
     columnWarning() {
       let message = '-- ';
-      if (this.dataSources) {
-        if (this.selectedDataSource) {
-          message += 'No columns/fields found';
-        } else {
-          message += 'Please select a data source';
-        }
+      if (this.selectedDataSource) {
+        message += 'No columns/fields found';
       } else {
-        message += 'Please wait';
+        message += 'Please select a data source';
       }
       return message;
     },
@@ -251,7 +252,6 @@ let app = new Vue({
       this.onSelectChange();
     },
     selectedDataSource(dataSource, oldValue) {
-      debugger;
       this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
       if (dataSource === 'new') {
         this.createDataSource();
@@ -305,6 +305,10 @@ let app = new Vue({
           }
         }
       });
+
+      this.dataSourceProvider.then(function(dataSource) {
+        this.selectedDataSource.id = dataSource.data.id;
+      });
     },
     onSelectChange(){
       Vue.nextTick(() => {
@@ -332,7 +336,6 @@ let app = new Vue({
           if (initialResult) {
             this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
           }
-
         })
         .catch((err) => {
           console.error(err);

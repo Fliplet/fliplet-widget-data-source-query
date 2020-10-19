@@ -186,13 +186,18 @@
 	    var _this2 = this;
 	
 	    Vue.nextTick(function () {
-	      if (!_this2.dataSourceProvider) _this2.initDataSourceProvider(data.dataSourceId);
+	      if (!_this2.dataSourceProvider) {
+	        if (initialResult && initialResult.dataSourceId) {
+	          _this2.initDataSourceProvider(initialResult.dataSourceId);
+	        } else {
+	          _this2.initDataSourceProvider();
+	        }
+	      }
 	    });
 	  },
 	
 	  data: {
 	    isLoading: true,
-	    dataSources: null,
 	    selectedDataSource: null,
 	    selectedColumns: getInitialColumns(),
 	    applyFilters: getInitialFilters(),
@@ -213,14 +218,10 @@
 	    },
 	    columnWarning: function columnWarning() {
 	      var message = '-- ';
-	      if (this.dataSources) {
-	        if (this.selectedDataSource) {
-	          message += 'No columns/fields found';
-	        } else {
-	          message += 'Please select a data source';
-	        }
+	      if (this.selectedDataSource) {
+	        message += 'No columns/fields found';
 	      } else {
-	        message += 'Please wait';
+	        message += 'Please select a data source';
 	      }
 	      return message;
 	    },
@@ -386,7 +387,6 @@
 	      this.onSelectChange();
 	    },
 	    selectedDataSource: function selectedDataSource(dataSource, oldValue) {
-	      debugger;
 	      this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
 	      if (dataSource === 'new') {
 	        this.createDataSource();
@@ -441,6 +441,10 @@
 	            $vm.selectedDataSource = dataSource;
 	          }
 	        }
+	      });
+	
+	      this.dataSourceProvider.then(function (dataSource) {
+	        this.selectedDataSource.id = dataSource.data.id;
 	      });
 	    },
 	    onSelectChange: function onSelectChange() {

@@ -6,30 +6,6 @@
     <template v-else>
       <div class="form-group">
         <div id="dataSourceProvider" class="col-sm-8 ui-sortable"></div>
-        <!-- <div class="col-sm-4 control-label">
-          <label>{{settings.dataSourceLabel}}</label>
-        </div>
-        <div class="col-sm-8">
-          <label class="select-proxy-display">
-            <select data-label="select" class="hidden-select form-control" v-model="selectedDataSource"
-                    :disabled="!dataSources">
-              <option value="null">-- \{{ dataSources ? 'Select a data source' : 'Please wait' }}</option>
-              <option disabled>------</option>
-              <option value="new">Create a new data source</option>
-              <option disabled>------</option>
-              <option :value="dataSource" v-for="dataSource in dataSources">\{{dataSource.name}}</option>
-            </select>
-            <span class="icon fa fa-chevron-down"></span>
-            <span class="select-value-proxy">
-              <template v-if="dataSources">
-                <template v-if="selectedDataSource">\{{selectedDataSource.name}}</template>
-                <template v-else>-- Select a data source</template>
-              </template>
-              <template v-else>-- Please wait</template>
-            </span>
-          </label>
-          <small v-if="manageDataBtn"><a href="#" v-on:click.prevent="manageDataSource(selectedDataSource.id)">Edit data source</a></small>
-        </div> -->
       </div>
 
       <div class="form-group" v-if="showModesSelector">
