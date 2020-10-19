@@ -289,10 +289,6 @@ let app = new Vue({
           }
         }
       });
-
-      this.dataSourceProvider.then(function(dataSource) {
-        this.selectedDataSource.id = dataSource.data.id;
-      });
     },
     onSelectChange(){
       Vue.nextTick(() => {
