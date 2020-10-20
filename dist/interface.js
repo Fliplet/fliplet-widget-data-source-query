@@ -205,11 +205,15 @@
 	    manageDataBtn: false
 	  },
 	  computed: {
+	    checkPackage: function checkPackage() {
+	      if (data.id === 'com.fliplet.data-source-query') return true;
+	    },
 	    selectedMode: function selectedMode() {
 	      return settings.modes[this.selectedModeIdx];
 	    },
 	    columnWarning: function columnWarning() {
 	      var message = '-- ';
+	
 	      if (this.selectedDataSource) {
 	        message += 'No columns/fields found';
 	      } else {
@@ -406,7 +410,7 @@
 	    initDataSourceProvider: function initDataSourceProvider(currentDataSourceId) {
 	      var $vm = this;
 	      var dataSourceData = {
-	        dataSourceTitle: 'Select the data source containing the user information',
+	        dataSourceTitle: this.checkPackage ? 'Select the data source containing the user information' : 'Select data source',
 	        dataSourceId: currentDataSourceId,
 	        appId: Fliplet.Env.get('appId'),
 	        default: {
@@ -425,10 +429,6 @@
 	            $vm.selectedDataSource = dataSource;
 	          }
 	        }
-	      });
-	
-	      this.dataSourceProvider.then(function (dataSource) {
-	        this.selectedDataSource.id = dataSource.data.id;
 	      });
 	    },
 	    onSelectChange: function onSelectChange() {

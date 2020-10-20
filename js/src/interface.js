@@ -119,11 +119,15 @@ let app = new Vue({
     manageDataBtn: false
   },
   computed: {
+    checkPackage() {
+      if (data.id === 'com.fliplet.data-source-query') return true;
+    },
     selectedMode() {
       return settings.modes[this.selectedModeIdx]
     },
     columnWarning() {
       let message = '-- ';
+
       if (this.selectedDataSource) {
         message += 'No columns/fields found';
       } else {
@@ -269,7 +273,7 @@ let app = new Vue({
     initDataSourceProvider(currentDataSourceId) {
       const $vm = this;
       let dataSourceData = {
-        dataSourceTitle: 'Select the data source containing the user information',
+        dataSourceTitle: this.checkPackage ? 'Select the data source containing the user information' : 'Select data source',
         dataSourceId: currentDataSourceId,
         appId: Fliplet.Env.get('appId'),
         default: {
