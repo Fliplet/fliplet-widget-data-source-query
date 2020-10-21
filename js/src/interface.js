@@ -97,7 +97,6 @@ let app = new Vue({
     Vue.nextTick(() => {
       if (!this.dataSourceProvider) {
         const dataSourceID = initialResult && initialResult.dataSourceId;
-
         this.initDataSourceProvider(dataSourceID);
       }
     });
@@ -119,9 +118,6 @@ let app = new Vue({
     manageDataBtn: false
   },
   computed: {
-    checkPackage() {
-      if (data.id === 'com.fliplet.data-source-query') return true;
-    },
     selectedMode() {
       return settings.modes[this.selectedModeIdx]
     },
@@ -271,13 +267,12 @@ let app = new Vue({
   },
   methods: {
     initDataSourceProvider(currentDataSourceId) {
-      const $vm = this;
       let dataSourceData = {
-        dataSourceTitle: this.checkPackage ? 'Select the data source containing the user information' : 'Select data source',
+        dataSourceTitle: settings.dataSourceLabel ? settings.dataSourceLabel : 'Select data source',
         dataSourceId: currentDataSourceId,
         appId: Fliplet.Env.get('appId'),
         default: {
-          name: 'Profile data for ' + Fliplet.Env.get('appName'),
+          name: 'Login 0000',
           entries: [],
           columns: []
         },
@@ -287,9 +282,9 @@ let app = new Vue({
       this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
         selector: '#dataSourceProvider',
         data: dataSourceData,
-        onEvent: function(event, dataSource) {
+        onEvent: (event, dataSource) => {
           if (event === 'dataSourceSelect') {
-            $vm.selectedDataSource = dataSource;
+            this.selectedDataSource = dataSource;
           }
         }
       });
