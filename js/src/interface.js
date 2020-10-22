@@ -272,7 +272,7 @@ let app = new Vue({
         dataSourceId: currentDataSourceId,
         appId: Fliplet.Env.get('appId'),
         default: {
-          name: 'Query 0000',
+          name: settings.dataSourceSubtitle,
           entries: [],
           columns: []
         },
