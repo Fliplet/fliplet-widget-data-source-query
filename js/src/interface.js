@@ -97,6 +97,7 @@ let app = new Vue({
     Vue.nextTick(() => {
       if (!this.dataSourceProvider) {
         const dataSourceID = initialResult && initialResult.dataSourceId;
+
         this.initDataSourceProvider(dataSourceID);
       }
     });
@@ -268,14 +269,14 @@ let app = new Vue({
   methods: {
     initDataSourceProvider(currentDataSourceId) {
       let dataSourceData = {
-        dataSourceTitle: settings.dataSourceLabel ? settings.dataSourceLabel : 'Select data source',
+        dataSourceTitle: settings.dataSourceTitle ? settings.dataSourceTitle : 'Select data source',
         dataSourceId: currentDataSourceId,
         appId: Fliplet.Env.get('appId'),
-        default: {
-          name: settings.defaultDataSourceName,
+        default: _.extend({
+          name: `Data for ${Fliplet.Env.get('appName')}`,
           entries: [],
           columns: []
-        },
+        }, settings.default),
         accessRules: []
       };
 
