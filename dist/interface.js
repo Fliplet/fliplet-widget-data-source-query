@@ -205,9 +205,6 @@
 	    manageDataBtn: false
 	  },
 	  computed: {
-	    checkPackage: function checkPackage() {
-	      if (data.id === 'com.fliplet.data-source-query') return true;
-	    },
 	    selectedMode: function selectedMode() {
 	      return settings.modes[this.selectedModeIdx];
 	    },
@@ -408,16 +405,17 @@
 	  },
 	  methods: {
 	    initDataSourceProvider: function initDataSourceProvider(currentDataSourceId) {
-	      var $vm = this;
+	      var _this3 = this;
+	
 	      var dataSourceData = {
-	        dataSourceTitle: this.checkPackage ? 'Select the data source containing the user information' : 'Select data source',
+	        dataSourceTitle: settings.dataSourceTitle ? settings.dataSourceTitle : 'Select data source',
 	        dataSourceId: currentDataSourceId,
 	        appId: Fliplet.Env.get('appId'),
-	        default: {
-	          name: 'Profile data for ' + Fliplet.Env.get('appName'),
+	        default: _.extend({
+	          name: 'Data for ' + Fliplet.Env.get('appName'),
 	          entries: [],
 	          columns: []
-	        },
+	        }, settings.default),
 	        accessRules: []
 	      };
 	
@@ -426,7 +424,7 @@
 	        data: dataSourceData,
 	        onEvent: function onEvent(event, dataSource) {
 	          if (event === 'dataSourceSelect') {
-	            $vm.selectedDataSource = dataSource;
+	            _this3.selectedDataSource = dataSource;
 	          }
 	        }
 	      });
@@ -445,21 +443,21 @@
 	      this.showFilters = show;
 	    },
 	    getDataSources: function getDataSources() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      return Fliplet.DataSources.get({
 	        type: null
 	      }, {
 	        cache: false
 	      }).then(function (data) {
-	        _this3.loadingError = null;
+	        _this4.loadingError = null;
 	
 	        if (initialResult) {
-	          _this3.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
+	          _this4.selectedDataSource = _.find(data, { id: initialResult.dataSourceId });
 	        }
 	      }).catch(function (err) {
 	        console.error(err);
-	        _this3.loadingError = err;
+	        _this4.loadingError = err;
 	      });
 	    },
 	    addDefaultFilter: function addDefaultFilter() {
@@ -505,10 +503,10 @@
 	      template: '<input type="text" class="form-control" value="" :trigger-update="tagsinputData"/>',
 	      props: ['tagsinputData', 'field', 'updateSelectedColumns', 'initArr'],
 	      mounted: function mounted() {
-	        var _this4 = this;
+	        var _this5 = this;
 	
 	        var $el = $(this.$el).change(function (event) {
-	          return _this4.updateSelectedColumns(_this4.field.key, $el.tagsinput('items'));
+	          return _this5.updateSelectedColumns(_this5.field.key, $el.tagsinput('items'));
 	        });
 	        $el.tagsinput(this.tagsinputData);
 	        if (this.initArr) {
