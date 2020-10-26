@@ -19,7 +19,7 @@ function getInitialFilters() {
 if (!settings.modes) {
   settings.modes = [{
     columns: settings.columns || []
-  }]
+  }];
 }
 
 // Defaults
@@ -29,8 +29,8 @@ settings.modes.forEach((mode) => {
     if (!col.type || ['single', 'multiple'].indexOf(col.type) === -1) {
       col.type = 'single'
     }
-  })
-})
+  });
+});
 
 $(window).on('resize', Fliplet.Widget.autosize);
 
@@ -85,22 +85,25 @@ let app = new Vue({
       });
     }
 
-    Fliplet.Studio.onMessage((event) => {
-      if (event.data && event.data.event === 'overlay-close') {
-        this.reloadDataSources(event.data.data.dataSourceId);
-      }
-    });
-
     this.getDataSources().then(() => {
       this.isLoading = false;
     }).catch(() => {
       this.isLoading = false;
     });
+
     Fliplet.Widget.autosize();
+  },
+  updated() {
+    Vue.nextTick(() => {
+      if (!this.dataSourceProvider) {
+        const dataSourceID = initialResult && initialResult.dataSourceId;
+
+        this.initDataSourceProvider(dataSourceID);
+      }
+    });
   },
   data: {
     isLoading: true,
-    dataSources: null,
     selectedDataSource: null,
     selectedColumns: getInitialColumns(),
     applyFilters: getInitialFilters(),
@@ -110,6 +113,7 @@ let app = new Vue({
     loadingError: null,
     filters: [],
     modesDescription: settings.modesDescription,
+    dataSourceProvider: null,
     modes: settings.modes,
     selectedModeIdx: (initialResult && initialResult.selectedModeIdx) ? initialResult.selectedModeIdx : 0,
     manageDataBtn: false
@@ -120,14 +124,11 @@ let app = new Vue({
     },
     columnWarning() {
       let message = '-- ';
-      if (this.dataSources) {
-        if (this.selectedDataSource) {
-          message += 'No columns/fields found';
-        } else {
-          message += 'Please select a data source';
-        }
+
+      if (this.selectedDataSource) {
+        message += 'No columns/fields found';
       } else {
-        message += 'Please wait';
+        message += 'Please select a data source';
       }
       return message;
     },
@@ -240,15 +241,7 @@ let app = new Vue({
     selectedColumns() {
       this.onSelectChange();
     },
-    dataSources() {
-      this.onSelectChange();
-    },
     selectedDataSource(dataSource, oldValue) {
-      this.manageDataBtn = dataSource && dataSource !== 'null' && dataSource !== 'new';
-      if (dataSource === 'new') {
-        this.createDataSource();
-      }
-
       this.onSelectChange();
       if (oldValue && dataSource && dataSource.id !== oldValue.id) {
         // Reset selected columns and filters if switching from a non-null value
@@ -274,6 +267,29 @@ let app = new Vue({
     }
   },
   methods: {
+    initDataSourceProvider(currentDataSourceId) {
+      let dataSourceData = {
+        dataSourceTitle: settings.dataSourceTitle ? settings.dataSourceTitle : 'Select data source',
+        dataSourceId: currentDataSourceId,
+        appId: Fliplet.Env.get('appId'),
+        default: _.extend({
+          name: `Data for ${Fliplet.Env.get('appName')}`,
+          entries: [],
+          columns: []
+        }, settings.default),
+        accessRules: []
+      };
+
+      this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
+        selector: '#dataSourceProvider',
+        data: dataSourceData,
+        onEvent: (event, dataSource) => {
+          if (event === 'dataSourceSelect') {
+            this.selectedDataSource = dataSource;
+          }
+        }
+      });
+    },
     onSelectChange(){
       Vue.nextTick(() => {
         $('select.hidden-select').trigger('change');
@@ -295,7 +311,6 @@ let app = new Vue({
       })
         .then((data) => {
           this.loadingError = null;
-          this.dataSources = data;
 
           if (initialResult) {
             this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
@@ -326,52 +341,6 @@ let app = new Vue({
         delete newSelectedColumns[key];
       }
       this.selectedColumns = newSelectedColumns;
-    },
-    reloadDataSources: function reloadDataSources(dataSourceId) {
-      return Fliplet.DataSources.get({
-        type: null
-      }, {
-        cache: false
-      }).then((data) => {
-        this.loadingError = null;
-        this.dataSources = data;
-
-        if (dataSourceId) {
-          this.selectedDataSource = _.find(data, { id: dataSourceId });
-        }
-      }).catch(function (err) {
-        console.error(err);
-        this.loadingError = err;
-      });
-    },
-    createDataSource: function () {
-      Fliplet.Modal.prompt({
-        title: 'Please type a name for your data source',
-      }).then(result => {
-        if (result === null) {
-          this.selectedDataSource = null;
-          return;
-        }
-
-        var dataSourceName = result.trim();
-
-        if (!dataSourceName) {
-          Fliplet.Modal.alert({
-            message: 'You must enter a data source name'
-          }).then(() => {
-            this.createDataSource();
-            return;
-          });
-        }
-
-        Fliplet.DataSources.create({
-          name: dataSourceName,
-          organizationId: Fliplet.Env.get('organizationId')
-        }).then((ds) => {
-          this.dataSources.push(ds);
-          this.selectedDataSource = ds;
-        });
-      });
     },
     manageDataSource: function (dataSourceId) {
       Fliplet.Studio.emit('overlay', {
