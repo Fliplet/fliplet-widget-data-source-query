@@ -1,7 +1,7 @@
 let data = Fliplet.Widget.getData();
 let initialResult = data.result;
 let settings = data.settings;
-let accessRules = data.accessRules ? data.accessRules : [];
+let accessRules = data.accessRules || [];
 
 function getInitialColumns() {
   if (initialResult && initialResult.columns) {
