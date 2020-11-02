@@ -1,6 +1,7 @@
 let data = Fliplet.Widget.getData();
 let initialResult = data.result;
 let settings = data.settings;
+let accessRules = data.accessRules ? data.accessRules : [];
 
 function getInitialColumns() {
   if (initialResult && initialResult.columns) {
@@ -277,15 +278,7 @@ let app = new Vue({
           entries: [],
           columns: []
         }, settings.default),
-        accessRules: [
-          {
-            allow: 'all',
-            enabled: true,
-            type: [
-              'select'
-            ]
-          }
-        ]
+        accessRules: accessRules
       };
 
       this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
