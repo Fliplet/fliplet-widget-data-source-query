@@ -277,7 +277,15 @@ let app = new Vue({
           entries: [],
           columns: []
         }, settings.default),
-        accessRules: []
+        accessRules: [
+          {
+            allow: 'all',
+            enabled: true,
+            type: [
+              'select'
+            ]
+          }
+        ]
       };
 
       this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
