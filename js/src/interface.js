@@ -285,7 +285,8 @@ let app = new Vue({
         data: dataSourceData,
         onEvent: (event, dataSource) => {
           if (event === 'dataSourceSelect') {
-            this.selectedDataSource = dataSource;
+            this.selectedDataSource.columns = dataSource.columns;
+            this.selectedDataSource.id = dataSource.id;
           }
         }
       });

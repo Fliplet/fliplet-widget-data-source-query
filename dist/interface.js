@@ -424,7 +424,8 @@
 	        data: dataSourceData,
 	        onEvent: function onEvent(event, dataSource) {
 	          if (event === 'dataSourceSelect') {
-	            _this3.selectedDataSource = dataSource;
+	            _this3.selectedDataSource.columns = dataSource.columns;
+	            _this3.selectedDataSource.id = dataSource.id;
 	          }
 	        }
 	      });
