@@ -82,6 +82,7 @@
 	var data = Fliplet.Widget.getData();
 	var initialResult = data.result;
 	var settings = data.settings;
+	var accessRules = data.accessRules ? data.accessRules : [];
 	
 	function getInitialColumns() {
 	  if (initialResult && initialResult.columns) {
@@ -416,7 +417,7 @@
 	          entries: [],
 	          columns: []
 	        }, settings.default),
-	        accessRules: []
+	        accessRules: accessRules
 	      };
 	
 	      this.dataSourceProvider = Fliplet.Widget.open('com.fliplet.data-source-provider', {
