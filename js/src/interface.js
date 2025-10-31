@@ -273,7 +273,7 @@ let app = new Vue({
         dataSourceTitle: settings.dataSourceTitle ? settings.dataSourceTitle : 'Select data source',
         dataSourceId: currentDataSourceId,
         appId: Fliplet.Env.get('appId'),
-        default: _.extend({
+        default: Fliplet.Utils.extend({
           name: `Data for ${Fliplet.Env.get('appName')}`,
           entries: [],
           columns: []
@@ -314,7 +314,7 @@ let app = new Vue({
           this.loadingError = null;
 
           if (initialResult) {
-            this.selectedDataSource = _.find(data, {id: initialResult.dataSourceId});
+            this.selectedDataSource = Fliplet.Utils.find(data, {id: initialResult.dataSourceId});
           }
         })
         .catch((err) => {

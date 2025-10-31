@@ -7,7 +7,7 @@
   "provider_only": true,
   "interface": {
     "dependencies": [
-      "lodash",
+      "fliplet-utils",
       "fliplet-studio-ui",
       "fliplet-datasources",
       "vue.js"
